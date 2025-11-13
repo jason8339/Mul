@@ -373,27 +373,30 @@ struct HandTrackingSystem: System {
     ///   - pressDuration: 按壓持續時間（秒）
     ///   - config: 飛劍配置
     /// - Returns: 計算出的召回速度（m/s）
-    private func calculateRecallSpeed(pressDuration: TimeInterval, config: FlyingSwordConfig) -> Float {
-        let minSpeed = config.recallSpeed          // 0.5 m/s
-        let maxSpeed = config.maxRecallSpeed       // 3.0 m/s
-        let maxTime = config.maxRecallSpeedTime    // 6.0 秒
-        let lowSpeedDuration: TimeInterval = 3.0   // 前 3 秒保持低速
-
-        // 0 - 3.0 秒：保持初始速度（緊湊回轉）
-        if pressDuration <= lowSpeedDuration {
-            return minSpeed
+    /// 階段性捏合控制的召回速度計算
+    /// - Stage 1 (0-0.5s): 返回 nil，表示不進行召回
+    /// - Stage 2 (0.5-1.5s): 返回固定 1m/s
+    /// - Stage 3 (1.5s+): 每增加1秒，速度增加1m/s，最大10000m/s
+    private func calculateRecallSpeed(pressDuration: TimeInterval, config: FlyingSwordConfig) -> Float? {
+        // ⭐ Stage 1: 0-0.5秒 - 不召回，讓玩家有時間重新定位右手
+        if pressDuration < 0.5 {
+            return nil
         }
 
-        // 超過最大時間：保持最大速度
-        if pressDuration >= maxTime {
-            return maxSpeed
+        // ⭐ Stage 2: 0.5-1.5秒 - 固定 1m/s 召回速度
+        if pressDuration < 1.5 {
+            return 1.0
         }
 
-        // 3.0 - 6.0 秒：線性遞增速度
-        let progress = Float((pressDuration - lowSpeedDuration) / (maxTime - lowSpeedDuration))
-        let speed = minSpeed + (maxSpeed - minSpeed) * progress
-
-        return speed
+        // ⭐ Stage 3: 1.5秒以上 - 速度遞增
+        // 1.5s = 1m/s
+        // 2.5s = 2m/s
+        // 3.5s = 3m/s
+        // ...
+        // 最大 10000m/s
+        let additionalSeconds = pressDuration - 1.5
+        let speed = 1.0 + Float(additionalSeconds)
+        return min(speed, 10000.0)
     }
 
     private func checkPinchGestureAndRecallSword(in scene: RealityKit.Scene?) {
@@ -436,53 +439,69 @@ struct HandTrackingSystem: System {
                 swordComponent.pinchPressStartTime = currentTime
                 print("🤏 開始捏合手勢！")
             }
-            // 計算從劍到右手食指指尖的目標方向
-            let toTarget = rightIndexTip - swordEntity.position
-            let distance = length(toTarget)
 
-            if distance > 0.01 { // 避免除以零
-                let targetDirection = normalize(toTarget)
+            // 根據按壓時長計算召回速度
+            let pressDuration = currentTime - swordComponent.pinchPressStartTime
 
-                // 獲取當前速度方向和大小
-                let currentSpeed = length(swordComponent.velocity)
-                let currentDirection = currentSpeed > 0.01 ? normalize(swordComponent.velocity) : targetDirection
+            // ⭐ 關鍵修改：如果在 Stage 1 (0-0.5s)，不進行召回
+            if let targetSpeed = calculateRecallSpeed(
+                pressDuration: pressDuration,
+                config: swordComponent.config
+            ) {
+                // Stage 2 或 Stage 3：進行召回
+                // 計算從劍到右手食指指尖的目標方向
+                let toTarget = rightIndexTip - swordEntity.position
+                let distance = length(toTarget)
 
-                // 計算兩個方向的夾角（用於debug）
-                let dotProduct = dot(currentDirection, targetDirection)
-                let angle = acos(max(-1.0, min(1.0, dotProduct)))
+                if distance > 0.01 { // 避免除以零
+                    let targetDirection = normalize(toTarget)
 
-                // 計算最大允許的轉向角度（假設約60fps，即約0.0167秒一幀）
-                let estimatedDeltaTime: Float = 1.0 / 60.0
-                let maxTurnAngle = swordComponent.config.recallTurnSpeed * estimatedDeltaTime
+                    // 獲取當前速度方向和大小
+                    let currentSpeed = length(swordComponent.velocity)
+                    let currentDirection = currentSpeed > 0.01 ? normalize(swordComponent.velocity) : targetDirection
 
-                // 如果夾角小於最大轉向角度，直接朝目標方向
-                let newDirection: SIMD3<Float>
-                if angle <= maxTurnAngle || angle < 0.01 {
-                    newDirection = targetDirection
-                } else {
-                    // 使用球面線性插值（SLERP）平滑轉向
-                    let t = maxTurnAngle / angle
-                    let sinAngle = sin(angle)
-                    let a = sin((1.0 - t) * angle) / sinAngle
-                    let b = sin(t * angle) / sinAngle
-                    newDirection = normalize(a * currentDirection + b * targetDirection)
+                    // 計算兩個方向的夾角（用於debug）
+                    let dotProduct = dot(currentDirection, targetDirection)
+                    let angle = acos(max(-1.0, min(1.0, dotProduct)))
+
+                    // 計算最大允許的轉向角度（假設約60fps，即約0.0167秒一幀）
+                    let estimatedDeltaTime: Float = 1.0 / 60.0
+                    let maxTurnAngle = swordComponent.config.recallTurnSpeed * estimatedDeltaTime
+
+                    // 如果夾角小於最大轉向角度，直接朝目標方向
+                    let newDirection: SIMD3<Float>
+                    if angle <= maxTurnAngle || angle < 0.01 {
+                        newDirection = targetDirection
+                    } else {
+                        // 使用球面線性插值（SLERP）平滑轉向
+                        let t = maxTurnAngle / angle
+                        let sinAngle = sin(angle)
+                        let a = sin((1.0 - t) * angle) / sinAngle
+                        let b = sin(t * angle) / sinAngle
+                        newDirection = normalize(a * currentDirection + b * targetDirection)
+                    }
+
+                    swordComponent.velocity = newDirection * targetSpeed
+
+                    // 更新組件
+                    swordEntity.components[FlyingSwordComponent.self] = swordComponent
+
+                    // 定期打印召回狀態（每0.5秒打印一次）
+                    let printInterval: TimeInterval = 0.5
+                    if Int(pressDuration / printInterval) != Int((pressDuration - 0.016) / printInterval) {
+                        let stage = pressDuration < 1.5 ? "Stage 2" : "Stage 3"
+                        print("🤏 飛劍召回中 [\(stage)] (按壓時長: \(String(format: "%.1f", pressDuration))s, 距離: \(String(format: "%.2f", distance))m, 速度: \(String(format: "%.2f", targetSpeed))m/s)")
+                    }
                 }
-
-                // 根據按壓時長計算召回速度
-                let pressDuration = currentTime - swordComponent.pinchPressStartTime
-                let targetSpeed = calculateRecallSpeed(
-                    pressDuration: pressDuration,
-                    config: swordComponent.config
-                )
-                swordComponent.velocity = newDirection * targetSpeed
-
-                // 更新組件
+            } else {
+                // Stage 1 (0-0.5s)：不召回，保持當前速度
+                // 定期提示玩家處於等待階段
+                let printInterval: TimeInterval = 0.2
+                if Int(pressDuration / printInterval) != Int((pressDuration - 0.016) / printInterval) {
+                    print("🤏 [Stage 1] 等待中... (按壓時長: \(String(format: "%.2f", pressDuration))s, 右手可自由移動)")
+                }
+                // 不修改速度，讓劍繼續當前的飛行狀態
                 swordEntity.components[FlyingSwordComponent.self] = swordComponent
-
-                // 只在開始召回時打印一次（角度較大時）
-                if angle > 0.5 {
-                    print("🤏 檢測到左手捏合手勢！飛劍召回中... (距離: \(String(format: "%.2f", distance))m, 角度: \(String(format: "%.1f", angle * 180 / .pi))°, 速度: \(String(format: "%.2f", targetSpeed))m/s)")
-                }
             }
         } else {
             // 捏合結束，重置狀態

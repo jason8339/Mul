@@ -212,6 +212,15 @@ struct FlyingSwordComponent: Component {
     mutating func calculateRemoteControlVelocityChange(swordPosition: SIMD3<Float>) -> SIMD3<Float> {
         guard isFlying else { return .zero }
 
+        // ⭐ 新增：如果正在捏合且在0-0.5秒階段，禁用遙控
+        if isPinchPressed {
+            let currentTime = ProcessInfo.processInfo.systemUptime
+            let pressDuration = currentTime - pinchPressStartTime
+            if pressDuration < 0.5 {
+                return .zero  // 禁用遙控，讓右手可以回到身體中間
+            }
+        }
+
         let fingerVelocity = calculateFingerVelocity()
 
         // 如果手指速度太小，不施加影響
