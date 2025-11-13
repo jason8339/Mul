@@ -321,7 +321,8 @@ struct FlyingSwordSystem: System {
         // 只订阅一次（检查是否已经订阅）
         if Self.collisionTask == nil {
             Self.collisionTask = Task {
-                for await event in scene.subscribe(to: CollisionEvents.Began.self) {
+                // 訂閱場景中所有碰撞事件
+                _ = scene.subscribe(to: CollisionEvents.Began.self, on: scene) { event in
                     Self.handleCollision(event)
                 }
             }

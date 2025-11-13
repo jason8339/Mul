@@ -492,18 +492,6 @@ struct HandTrackingSystem: System {
     ///   - handComponent: The hand-tracking component to update.
     @MainActor
     func addJoints(to handEntity: Entity, handComponent: inout HandTrackingComponent) async {
-        /// The size of the sphere mesh.
-        let radius: Float = 0.01
-
-        /// The material to apply to the sphere entity.
-        let material = SimpleMaterial(color: .white, isMetallic: false)
-
-        /// The sphere entity that represents a joint in a hand.
-        let sphereEntity = ModelEntity(
-            mesh: .generateSphere(radius: radius),
-            materials: [material]
-        )
-
         // For each joint, create a node and attach it to the hand.
         for (jointName, _, _) in Hand.joints {
             // 若已存在 joint 節點就不重複建立
@@ -540,18 +528,6 @@ struct HandTrackingSystem: System {
                     } catch {
                         print("❌ 無法載入 Sword_No1 模型: \(error)")
                     }
-                }
-                
-                // 為 jointNode 添加可視化球體（如果需要）
-                if !jointNode.children.contains(where: { $0 is ModelEntity }) {
-                    let newJointViz = sphereEntity.clone(recursive: false)
-                    jointNode.addChild(newJointViz)
-                }
-            } else {
-                // 其他關節：可視化球體（若需要）
-                if !jointNode.children.contains(where: { $0 is ModelEntity }) {
-                    let newJointViz = sphereEntity.clone(recursive: false)
-                    jointNode.addChild(newJointViz)
                 }
             }
         }
