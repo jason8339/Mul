@@ -284,6 +284,15 @@ struct HandTrackingSystem: System {
                                     )
                                     swordEntity.components.set(physicsMotion)
 
+                                    // 確保劍是可見的
+                                    swordEntity.isEnabled = true
+
+                                    let launchSpeed = length(velocity) * 100  // 轉換為 cm/s
+                                    let launchPos = swordEntity.position(relativeTo: nil)
+                                    print("🚀 發射飛劍！")
+                                    print("   位置: \(launchPos)")
+                                    print("   速度: \(String(format: "%.2f", launchSpeed)) cm/s")
+                                    print("   方向: \(normalize(velocity))")
                                     print("✅ 飛行中：啟用物理引擎碰撞檢測")
 
                                     // 劍已在場景根目錄，直接更新組件
