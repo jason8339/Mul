@@ -1,3 +1,4 @@
+
 import SwiftUI
 import RealityKit
 
@@ -10,13 +11,61 @@ struct MainView: View {
     @State private var isImmersiveSpaceOpen = false
     @State private var isOpeningOrClosing = false
 
+    // 地圖選擇（使用 AppStorage 以便與 ImmersiveSpace 共享）
+    @AppStorage("selectedMap") private var selectedMapRaw: String = MapType.oldfactory.rawValue
+
+    private var selectedMap: MapType {
+        get { MapType(rawValue: selectedMapRaw) ?? .oldfactory }
+        set { selectedMapRaw = newValue.rawValue }
+    }
+
     // 若你仍然需要在這裡註冊系統，可保留這兩個旗標；建議改為在 HandTrackingView 註冊
     private static var didRegisterHandTrackingSystem = false
     private static var didRegisterFlyingSwordSystem = false
 
+    // 地圖類型枚舉
+    enum MapType: String, CaseIterable, Identifiable {
+        case oldfactory = "Oldfactory"
+        case budokan = "Budokan"
+
+        var id: String { rawValue }
+
+        var displayName: String {
+            switch self {
+            case .oldfactory: return "🏭 Oldfactory"
+            case .budokan: return "🏯 Budokan"
+            }
+        }
+    }
+
     var body: some View {
         VStack(spacing: 16) {
             Text("Hand Tracking Example")
+                .font(.title)
+
+            // 地圖選擇器
+            VStack(spacing: 8) {
+                Text("選擇地圖")
+                    .font(.headline)
+
+                Picker("地圖", selection: Binding(
+                    get: { selectedMap },
+                    set: { selectedMapRaw = $0.rawValue }
+                )) {
+                    ForEach(MapType.allCases) { map in
+                        Text(map.displayName).tag(map)
+                    }
+                }
+                .pickerStyle(.segmented)
+                .disabled(isImmersiveSpaceOpen)
+            }
+            .padding(.horizontal)
+
+            if isImmersiveSpaceOpen {
+                Text("當前地圖: \(selectedMap.displayName)")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
 
             HStack {
                 Button {

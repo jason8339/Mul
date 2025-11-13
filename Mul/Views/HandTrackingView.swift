@@ -5,6 +5,9 @@ import ARKit
 
 /// A reality view that contains all hand-tracking entities.
 struct HandTrackingView: View {
+    // 從 AppStorage 讀取選擇的地圖
+    @AppStorage("selectedMap") private var selectedMapName: String = "Oldfactory"
+
     /// The main body of the view.
     var body: some View {
         RealityView { content in
@@ -20,8 +23,8 @@ struct HandTrackingView: View {
     @MainActor
     func loadScene(in content: any RealityViewContentProtocol) async {
         do {
-            // 从 RealityKitContent bundle 加载场景（使用异步初始化）
-            let scene = try await Entity(named: "Oldfactory", in: realityKitContentBundle)
+            // 从 RealityKitContent bundle 加载场景（使用选择的地图）
+            let scene = try await Entity(named: selectedMapName, in: realityKitContentBundle)
 
             // 可选：调整场景位置和缩放
             scene.position = [0, 0, 0]  // 场景中心位置
@@ -31,7 +34,7 @@ struct HandTrackingView: View {
             addCollisionToScene(scene)
 
             content.add(scene)
-            print("✅ 场景 'Oldfactory' 加载成功")
+            print("✅ 场景 '\(selectedMapName)' 加载成功")
         } catch {
             print("❌ 加载场景失败: \(error)")
         }
