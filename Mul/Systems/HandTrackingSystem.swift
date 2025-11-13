@@ -269,9 +269,9 @@ struct HandTrackingSystem: System {
                                     let physicsBody = PhysicsBodyComponent(
                                         massProperties: .init(mass: swordComponent.config.swordWeight),
                                         material: .generate(
-                                            staticFriction: 0.3,
-                                            dynamicFriction: 0.2,
-                                            restitution: 0.1  // 弹性系数
+                                            staticFriction: 0.2,
+                                            dynamicFriction: 0.1,
+                                            restitution: 0.7  // 彈性系數提高，使反彈更明顯
                                         ),
                                         mode: .dynamic
                                     )

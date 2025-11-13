@@ -30,21 +30,8 @@ struct FlyingSwordSystem: System {
                     print("✈️ 飛劍飛行中: 位置=\(String(format: "(%.2f, %.2f, %.2f)", pos.x, pos.y, pos.z))m, 速度=\(String(format: "%.2f", speed))cm/s, 時間=\(String(format: "%.1f", swordComponent.elapsedTime))s")
                 }
 
-                // 检查碰撞（使用raycast作为备份，主要依靠物理事件）
-                if checkCollision(entity: entity, component: &swordComponent, deltaTime: context.deltaTime, in: context.scene) {
-                    // 发生碰撞，停止飞行
-                    swordComponent.velocity = .zero
-                    swordComponent.resetFlightState()
-
-                    // ⭐ 移除物理引擎组件
-                    entity.components.remove(CollisionComponent.self)
-                    entity.components.remove(PhysicsBodyComponent.self)
-                    entity.components.remove(PhysicsMotionComponent.self)
-                    print("💥 飞剑碰撞！停止飞行，禁用物理引擎")
-
-                    entity.components[FlyingSwordComponent.self] = swordComponent
-                    continue
-                }
+                // 不再使用 raycast 碰撞檢測，完全依賴物理引擎的碰撞事件
+                // 物理引擎會自動處理碰撞和反彈
 
                 // Update flying sword position and velocity
                 updateFlyingSword(entity: entity, component: &swordComponent, deltaTime: context.deltaTime)
@@ -376,25 +363,23 @@ struct FlyingSwordSystem: System {
             return // 撞到自己，忽略
         }
 
-        // ✅ 发生有效碰撞！停止飞行
+        // ✅ 发生碰撞！物理引擎會自動處理反彈
         print("💥 物理引擎检测到碰撞!")
         if let other = otherEntity {
             print("   碰撞对象: \(other.name)")
             print("   碰撞位置: \(event.position)")
         }
 
-        // 停止飞行
-        swordComponent.velocity = .zero
-        swordComponent.resetFlightState()
+        // 從物理引擎讀取反彈後的速度
+        if let physicsMotion = sword.components[PhysicsMotionComponent.self] {
+            // 同步物理引擎的速度到我們的組件
+            swordComponent.velocity = physicsMotion.linearVelocity
 
-        // 移除物理组件
-        sword.components.remove(CollisionComponent.self)
-        sword.components.remove(PhysicsBodyComponent.self)
-        sword.components.remove(PhysicsMotionComponent.self)
+            print("🎾 飞剑反弹！")
+            print("   反弹后速度: \(String(format: "%.2f", length(physicsMotion.linearVelocity) * 100)) cm/s")
+        }
 
         // 更新组件
         sword.components[FlyingSwordComponent.self] = swordComponent
-
-        print("✅ 飞剑已停止，物理引擎已禁用")
     }
 }
