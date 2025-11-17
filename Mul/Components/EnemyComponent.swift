@@ -13,7 +13,7 @@ struct EnemyComponent: Component {
     var currentHealth: Float = 1
 
     /// 敵人的移動速度 (m/s)
-    var moveSpeed: Float = 0.1  // 10cm/s
+    var moveSpeed: Float = 1  // 10cm/s
 
     /// 敵人是否存活
     var isAlive: Bool {
@@ -27,6 +27,12 @@ struct EnemyComponent: Component {
 
     /// 當前速度向量
     var velocity: SIMD3<Float> = .zero
+
+    // MARK: - 傷害追蹤（用於分段傷害）
+
+    /// 記錄每把飛劍上次造成傷害的位置
+    /// Key: 飛劍實體的 ID，Value: 上次傷害位置
+    var lastDamagePositions: [ObjectIdentifier: SIMD3<Float>] = [:]
 
     // MARK: - 初始化
 

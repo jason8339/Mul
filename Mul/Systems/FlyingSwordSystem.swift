@@ -23,12 +23,7 @@ struct FlyingSwordSystem: System {
                 // Accumulate elapsed flight time using deltaTime
                 swordComponent.elapsedTime += context.deltaTime
 
-                // 每秒輸出一次位置信息（調試用）
-                if Int(swordComponent.elapsedTime * 10) % 10 == 0 {
-                    let pos = entity.position(relativeTo: nil)
-                    let speed = length(swordComponent.velocity) * 100
-                    print("✈️ 飛劍飛行中: 位置=\(String(format: "(%.2f, %.2f, %.2f)", pos.x, pos.y, pos.z))m, 速度=\(String(format: "%.2f", speed))cm/s, 時間=\(String(format: "%.1f", swordComponent.elapsedTime))s")
-                }
+                // 調試日誌已移除
 
                 // 不再使用 raycast 碰撞檢測，完全依賴物理引擎的碰撞事件
                 // 物理引擎會自動處理碰撞和反彈

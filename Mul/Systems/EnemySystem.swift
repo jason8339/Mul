@@ -138,37 +138,82 @@ struct EnemySystem: System {
                 let collisionRadius: Float = 0.75 + 0.4
 
                 if distance < collisionRadius {
-                    // 碰撞發生！計算傷害
-                    let mass = swordComponent.config.swordWeight
-                    let velocity = length(swordComponent.velocity)
-                    let kineticEnergy = 0.5 * mass * velocity * velocity
-                    let damage = kineticEnergy * 10.0
+                    // 檢查是否應該造成傷害（每1cm一次）
+                    let swordID = ObjectIdentifier(sword)
+                    let currentSwordPos = swordPos
 
-                    print("⚔️ 手動檢測：飛劍擊中敵人！")
-                    print("   距離: \(String(format: "%.2f", distance)) m")
-                    print("   質量: \(String(format: "%.2f", mass)) kg")
-                    print("   速度: \(String(format: "%.2f", velocity)) m/s")
-                    print("   動能: \(String(format: "%.2f", kineticEnergy)) J")
-                    print("   傷害: \(String(format: "%.1f", damage))")
+                    var shouldDealDamage = false
 
-                    // 敵人受到傷害
-                    let isDead = enemyComponent.takeDamage(damage)
+                    if let lastPos = enemyComponent.lastDamagePositions[swordID] {
+                        // 計算飛劍移動的距離
+                        let travelDistance = length(currentSwordPos - lastPos)
 
-                    // 顯示傷害數字
-                    Task { @MainActor in
-                        DamageTextSystem.showDamageText(damage: damage, on: enemy)
+                        // 如果移動超過 1cm (0.01m)，造成傷害
+                        if travelDistance >= 0.01 {
+                            shouldDealDamage = true
+                        }
+                    } else {
+                        // 第一次碰到這把劍，造成傷害
+                        shouldDealDamage = true
                     }
 
-                    // 如果敵人死亡，從場景中移除
-                    if isDead {
+                    if shouldDealDamage {
+                        // 更新上次傷害位置
+                        enemyComponent.lastDamagePositions[swordID] = currentSwordPos
+
+                        // 計算傷害
+                        let mass = swordComponent.config.swordWeight
+                        let velocity = length(swordComponent.velocity)
+                        let kineticEnergy = 0.5 * mass * velocity * velocity
+                        let damage = kineticEnergy * 10.0
+
+                        print("⚔️ 手動檢測：飛劍擊中敵人！")
+                        print("   距離: \(String(format: "%.2f", distance)) m")
+                        print("   傷害: \(String(format: "%.1f", damage))")
+
+                        // 敵人受到傷害
+                        let isDead = enemyComponent.takeDamage(damage)
+
+                        // 顯示傷害數字（在碰撞位置，不綁定敵人）
+                        // 計算顯示位置：敵人頭頂上方
+                        let enemyWorldPos = enemy.position(relativeTo: nil)
+                        let damageTextPos = SIMD3<Float>(
+                            enemyWorldPos.x,
+                            enemyWorldPos.y + 0.925,  // 敵人頭頂上方
+                            enemyWorldPos.z
+                        )
+                        let damageValue = damage
+                        let rootRef = Self.sceneRoot
+                        let fingerPos = HandTrackingSystem.rightIndexTipPosition  // 當前手指位置
                         Task { @MainActor in
-                            try? await Task.sleep(for: .seconds(0.5))
-                            enemy.removeFromParent()
+                            DamageTextSystem.showDamageText(damage: damageValue, at: damageTextPos, playerFingerPosition: fingerPos, sceneRoot: rootRef)
+                        }
+
+                        // 如果敵人死亡，1秒淡出後移除
+                        if isDead {
+                            Task { @MainActor in
+                                // 淡出動畫
+                                let fadeDuration: TimeInterval = 1.0
+                                let startTime = Date()
+
+                                while Date().timeIntervalSince(startTime) < fadeDuration {
+                                    let elapsed = Date().timeIntervalSince(startTime)
+                                    let progress = Float(elapsed / fadeDuration)
+
+                                    // 調整敵人透明度
+                                    enemy.components.set(OpacityComponent(opacity: 1.0 - progress))
+
+                                    // 等待下一幀
+                                    try? await Task.sleep(for: .milliseconds(16))
+                                }
+
+                                // 動畫結束，移除敵人
+                                enemy.removeFromParent()
+                            }
                         }
                     }
 
-                    // 只處理一次碰撞，避免重複計算傷害
-                    break
+                    // 不 break，繼續檢查其他飛劍
                 }
             }
 
@@ -387,9 +432,16 @@ struct EnemySystem: System {
         // 更新組件
         enemy.components[EnemyComponent.self] = enemyComponent
 
-        // 顯示傷害數字
+        // 顯示傷害數字（舊代碼，不應該被調用）
+        let enemyWorldPos = enemy.position(relativeTo: nil)
+        let damageTextPos = SIMD3<Float>(
+            enemyWorldPos.x,
+            enemyWorldPos.y + 0.925,
+            enemyWorldPos.z
+        )
+        let fingerPos = HandTrackingSystem.rightIndexTipPosition
         Task { @MainActor in
-            DamageTextSystem.showDamageText(damage: damage, on: enemy)
+            DamageTextSystem.showDamageText(damage: damage, at: damageTextPos, playerFingerPosition: fingerPos, sceneRoot: Self.sceneRoot)
         }
 
         // 如果敵人死亡，從場景中移除

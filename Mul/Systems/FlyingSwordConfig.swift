@@ -226,7 +226,7 @@ extension FlyingSwordConfig {
         pinchGestureThreshold: 0.02,     // 2公分捏合識別
         recallSpeed: 1,                // 0.5 m/s 召回初始速度
         maxRecallSpeed: 5.0,             // 3.0 m/s 召回最大速度
-        maxRecallSpeedTime: 6.0,         // 6秒達到最大速度（0-3秒保持低速）
+        maxRecallSpeedTime: 5.0,         // 6秒達到最大速度（0-3秒保持低速）
         recallTurnSpeed: 3.0,            // 3.0 弧度/秒 轉向速度
         launchTurnSpeed: 5.0,            // 5.0 弧度/秒 發射轉向速度
         launchTurnDuration: 0.3,         // 0.3秒 發射轉向持續時間
