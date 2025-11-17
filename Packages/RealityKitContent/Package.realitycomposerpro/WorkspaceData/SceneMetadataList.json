@@ -77,7 +77,7 @@
       [
         "230A6DE5-BDA5-4366-9FAC-DD19745A17DE",
         "root",
-        "Material_1"
+        "Material_2"
       ],
       {
         "isExpanded" : true,
@@ -86,7 +86,7 @@
       [
         "230A6DE5-BDA5-4366-9FAC-DD19745A17DE",
         "root",
-        "Material_2"
+        "Material_1"
       ],
       {
         "isExpanded" : true,
@@ -99,7 +99,7 @@
       [
         "26B506FE-7E3A-4A1C-B567-43E49D962529",
         "root",
-        "平面"
+        "平面_001"
       ],
       {
         "isExpanded" : true,
@@ -116,7 +116,7 @@
       [
         "26B506FE-7E3A-4A1C-B567-43E49D962529",
         "root",
-        "Plane_005"
+        "平面"
       ],
       {
         "isExpanded" : true,
@@ -125,7 +125,7 @@
       [
         "26B506FE-7E3A-4A1C-B567-43E49D962529",
         "root",
-        "平面_001"
+        "Plane_005"
       ],
       {
         "isExpanded" : true,
@@ -166,8 +166,7 @@
     "objectMetadataList" : [
       [
         "E3E490AA-0A9B-4E4E-BD5A-06696D7E03F0",
-        "root",
-        "_materials"
+        "root"
       ],
       {
         "isExpanded" : true,
@@ -175,7 +174,8 @@
       },
       [
         "E3E490AA-0A9B-4E4E-BD5A-06696D7E03F0",
-        "root"
+        "root",
+        "_materials"
       ],
       {
         "isExpanded" : true,
