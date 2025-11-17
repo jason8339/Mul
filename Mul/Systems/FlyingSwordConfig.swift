@@ -198,11 +198,11 @@ extension FlyingSwordConfig {
 
     /// 標準配置（原始設定值）
     static let standard = FlyingSwordConfig(
-        swordWeight: 0.5,               // 500克
+        swordWeight: 1,               // 1000克
         swordLength: 0.8,                // 80公分
-        velocityThreshold: 0.2,          // 0.2 m/s
-        velocityMultiplier: 2.0,         // 2倍速度
-        minFlyingSpeed: 0.1,             // 0.1 m/s
+        velocityThreshold: 0.3,          // 0.2 m/s
+        velocityMultiplier: 5,         // 2倍速度
+        minFlyingSpeed: 1,             // 0.1 m/s
         maxFlyingTime: 10000.0,              // 8秒
         dragCoefficient: 0.0,            // 無阻力
         gravity: 0.0,                    // 無重力
@@ -225,12 +225,12 @@ extension FlyingSwordConfig {
         autoReturnDelay: 1.0,            // 1秒後才檢測自動返回
         pinchGestureThreshold: 0.02,     // 2公分捏合識別
         recallSpeed: 1,                // 0.5 m/s 召回初始速度
-        maxRecallSpeed: 3.0,             // 3.0 m/s 召回最大速度
+        maxRecallSpeed: 5.0,             // 3.0 m/s 召回最大速度
         maxRecallSpeedTime: 6.0,         // 6秒達到最大速度（0-3秒保持低速）
         recallTurnSpeed: 3.0,            // 3.0 弧度/秒 轉向速度
         launchTurnSpeed: 5.0,            // 5.0 弧度/秒 發射轉向速度
         launchTurnDuration: 0.3,         // 0.3秒 發射轉向持續時間
-        autoReturnTurnSpeed: 7.0         // 3.0 弧度/秒 自動返回轉向速度
+        autoReturnTurnSpeed:3.0         // 3.0 弧度/秒 自動返回轉向速度
     )
 
     /// 輕劍配置 - 快速靈活

@@ -22,6 +22,7 @@ struct MainView: View {
     // 若你仍然需要在這裡註冊系統，可保留這兩個旗標；建議改為在 HandTrackingView 註冊
     private static var didRegisterHandTrackingSystem = false
     private static var didRegisterFlyingSwordSystem = false
+    private static var didRegisterEnemySystem = false
 
     // 地圖類型枚舉
     enum MapType: String, CaseIterable, Identifiable {
@@ -88,6 +89,11 @@ struct MainView: View {
                                 FlyingSwordSystem.registerSystem()
                                 Self.didRegisterFlyingSwordSystem = true
                                 print("✅ FlyingSwordSystem registered.")
+                            }
+                            if !Self.didRegisterEnemySystem {
+                                EnemySystem.registerSystem()
+                                Self.didRegisterEnemySystem = true
+                                print("✅ EnemySystem registered.")
                             }
 
                         case .userCancelled:

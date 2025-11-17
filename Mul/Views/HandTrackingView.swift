@@ -67,9 +67,10 @@ struct HandTrackingView: View {
             }
 
             for child in entity.children {
-                // ⚠️ 关键修复：跳过手部关节实体和剑实体
+                // ⚠️ 关键修复：跳过手部关节实体、剑实体和敌人实体
                 let isHandJoint = (child.parent?.components[HandTrackingComponent.self] != nil)
                 let isSword = (child.name.contains("Sword") || child.name == "Sword_No1")
+                let isEnemy = (child.name.contains("Enemy") || child.components.has(EnemyComponent.self))
 
                 if isHandJoint {
                     skippedCount += 1
@@ -83,6 +84,14 @@ struct HandTrackingView: View {
                     skippedCount += 1
                     if totalEntities <= 20 {
                         print("\(indent)🚫 跳过剑实体: \(child.name)")
+                    }
+                    continue
+                }
+
+                if isEnemy {
+                    skippedCount += 1
+                    if totalEntities <= 20 {
+                        print("\(indent)🚫 跳过敌人实体: \(child.name)")
                     }
                     continue
                 }
@@ -104,10 +113,11 @@ struct HandTrackingView: View {
 
                     // 只为有合理尺寸的物体添加碰撞
                     if size.x > 0.01 && size.y > 0.01 && size.z > 0.01 {
-                        // 添加碰撞组件
+                        // 添加碰撞组件（使用場景碰撞過濾器）
                         let collision = CollisionComponent(
                             shapes: [.generateBox(size: size)],
-                            mode: .default
+                            mode: .default,
+                            filter: CollisionFilterSetup.setupSceneCollision()
                         )
                         modelEntity.components.set(collision)
 
@@ -245,10 +255,11 @@ struct HandTrackingView: View {
         floorEntity.position = [0, -0.1, 0]
         floorEntity.name = "InvisibleFloor"
 
-        // 添加碰撞組件
+        // 添加碰撞組件（使用場景碰撞過濾器）
         let collision = CollisionComponent(
             shapes: [.generateBox(size: [100, 0.1, 100])],
-            mode: .default
+            mode: .default,
+            filter: CollisionFilterSetup.setupSceneCollision()
         )
         floorEntity.components.set(collision)
 

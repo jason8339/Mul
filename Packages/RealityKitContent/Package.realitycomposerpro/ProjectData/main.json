@@ -1,5 +1,6 @@
 {
   "pathsToIds" : {
+    "\/RealityKitContent\/Sources\/RealityKitContent\/RealityKitContent.rkassets\/Enemy-1.usda" : "80E4AF8A-7483-404E-A458-6391486A5761",
     "\/RealityKitContent\/Sources\/RealityKitContent\/RealityKitContent.rkassets\/GridMaterial.usda" : "440DE5B4-E4E4-459B-AABF-9ACE96319272",
     "\/RealityKitContent\/Sources\/RealityKitContent\/RealityKitContent.rkassets\/Oldfactory.usda" : "1BBB8F43-616E-4730-8525-4DDBDCF34A7A",
     "\/RealityKitContent\/Sources\/RealityKitContent\/RealityKitContent.rkassets\/Scene.usda" : "0A9B4653-B11E-4D6A-850E-C6FCB621626C",
@@ -24,6 +25,7 @@
     "230A6DE5-BDA5-4366-9FAC-DD19745A17DE" : 8522890069862245174,
     "26B506FE-7E3A-4A1C-B567-43E49D962529" : 5709412544049555648,
     "26DBAE76-5DD8-47B6-A085-1B4ADA111097" : -1473471793054915709,
+    "80E4AF8A-7483-404E-A458-6391486A5761" : 6478056547702131506,
     "E3E490AA-0A9B-4E4E-BD5A-06696D7E03F0" : -8600818832434606235
   }
 }

@@ -363,20 +363,32 @@ struct FlyingSwordSystem: System {
             return // 撞到自己，忽略
         }
 
-        // ✅ 发生碰撞！物理引擎會自動處理反彈
-        print("💥 物理引擎检测到碰撞!")
-        if let other = otherEntity {
-            print("   碰撞对象: \(other.name)")
-            print("   碰撞位置: \(event.position)")
-        }
+        // ⭐ 检查是否碰到敵人
+        let isEnemy = otherEntity?.components.has(EnemyComponent.self) ?? false
 
-        // 從物理引擎讀取反彈後的速度
-        if let physicsMotion = sword.components[PhysicsMotionComponent.self] {
-            // 同步物理引擎的速度到我們的組件
-            swordComponent.velocity = physicsMotion.linearVelocity
+        if isEnemy {
+            // 碰到敵人：不反彈，保持原速度繼續飛行（穿透效果）
+            print("⚔️ FlyingSwordSystem 檢測到飛劍穿透敵人！")
+            print("   敵人名稱: \(otherEntity?.name ?? "unknown")")
+            print("   飛劍速度: \(String(format: "%.2f", length(swordComponent.velocity))) m/s")
+            print("   EnemySystem 應該也會收到這個碰撞事件並計算傷害")
+            // 不修改速度，飛劍繼續前進
+        } else {
+            // 碰到場景物體：正常反彈
+            print("💥 物理引擎检测到碰撞!")
+            if let other = otherEntity {
+                print("   碰撞对象: \(other.name)")
+                print("   碰撞位置: \(event.position)")
+            }
 
-            print("🎾 飞剑反弹！")
-            print("   反弹后速度: \(String(format: "%.2f", length(physicsMotion.linearVelocity) * 100)) cm/s")
+            // 從物理引擎讀取反彈後的速度
+            if let physicsMotion = sword.components[PhysicsMotionComponent.self] {
+                // 同步物理引擎的速度到我們的組件
+                swordComponent.velocity = physicsMotion.linearVelocity
+
+                print("🎾 飞剑反弹！")
+                print("   反弹后速度: \(String(format: "%.2f", length(physicsMotion.linearVelocity) * 100)) cm/s")
+            }
         }
 
         // 更新组件

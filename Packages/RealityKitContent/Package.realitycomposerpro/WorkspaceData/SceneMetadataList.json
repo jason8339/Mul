@@ -20,8 +20,7 @@
     "objectMetadataList" : [
       [
         "0A9B4653-B11E-4D6A-850E-C6FCB621626C",
-        "Root",
-        "Sphere"
+        "Root"
       ],
       {
         "isExpanded" : true,
@@ -29,7 +28,8 @@
       },
       [
         "0A9B4653-B11E-4D6A-850E-C6FCB621626C",
-        "Root"
+        "Root",
+        "Sphere"
       ],
       {
         "isExpanded" : true,
@@ -99,15 +99,7 @@
       [
         "26B506FE-7E3A-4A1C-B567-43E49D962529",
         "root",
-        "平面_001"
-      ],
-      {
-        "isExpanded" : true,
-        "isLocked" : false
-      },
-      [
-        "26B506FE-7E3A-4A1C-B567-43E49D962529",
-        "root"
+        "Plane_005"
       ],
       {
         "isExpanded" : true,
@@ -125,7 +117,15 @@
       [
         "26B506FE-7E3A-4A1C-B567-43E49D962529",
         "root",
-        "Plane_005"
+        "平面_001"
+      ],
+      {
+        "isExpanded" : true,
+        "isLocked" : false
+      },
+      [
+        "26B506FE-7E3A-4A1C-B567-43E49D962529",
+        "root"
       ],
       {
         "isExpanded" : true,
@@ -154,6 +154,18 @@
     "objectMetadataList" : [
       [
         "440DE5B4-E4E4-459B-AABF-9ACE96319272",
+        "Root"
+      ],
+      {
+        "isExpanded" : true,
+        "isLocked" : false
+      }
+    ]
+  },
+  "80E4AF8A-7483-404E-A458-6391486A5761" : {
+    "objectMetadataList" : [
+      [
+        "80E4AF8A-7483-404E-A458-6391486A5761",
         "Root"
       ],
       {

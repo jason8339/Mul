@@ -258,12 +258,15 @@ struct HandTrackingSystem: System {
                                     swordComponent.positionHistory.removeAll(keepingCapacity: true)
 
                                     // ⭐ 關鍵：發射時添加物理引擎组件
-                                    // 1. 碰撞组件
+                                    // 1. 碰撞组件（使用碰撞過濾器）
+                                    let swordFilter = CollisionFilterSetup.setupSwordCollision()
                                     let collision = CollisionComponent(
                                         shapes: [.generateBox(size: [0.05, 0.05, 0.8])],
-                                        mode: .default  // 使用default模式支持物理
+                                        mode: .default,  // 使用default模式支持物理
+                                        filter: swordFilter  // 與場景碰撞、與敵人觸發事件
                                     )
                                     swordEntity.components.set(collision)
+                                    print("⚔️ 飛劍碰撞設定: mode=.default, filter.group=\(swordFilter.group), filter.mask=\(swordFilter.mask)")
 
                                     // 2. 物理刚体组件（动态）
                                     let physicsBody = PhysicsBodyComponent(
@@ -325,8 +328,6 @@ struct HandTrackingSystem: System {
                                 
                                 // 更新組件
                                 swordEntity.components[FlyingSwordComponent.self] = swordComponent
-                                
-                                print("🎮 飛劍遙控中 - 手指位置: (\(String(format: "%.2f", fingerWorldPosition.x)), \(String(format: "%.2f", fingerWorldPosition.y)), \(String(format: "%.2f", fingerWorldPosition.z)))")
                             }
                         }
                     }
@@ -375,28 +376,34 @@ struct HandTrackingSystem: System {
     /// - Returns: 計算出的召回速度（m/s）
     /// 階段性捏合控制的召回速度計算
     /// - Stage 1 (0-0.5s): 返回 nil，表示不進行召回
-    /// - Stage 2 (0.5-1.5s): 返回固定 1m/s
-    /// - Stage 3 (1.5s+): 每增加1秒，速度增加1m/s，最大10000m/s
+    /// - Stage 2 (0.5-1.5s): 返回固定初始速度 (config.recallSpeed)
+    /// - Stage 3 (1.5s+): 線性增加到最大速度 (config.maxRecallSpeed)
     private func calculateRecallSpeed(pressDuration: TimeInterval, config: FlyingSwordConfig) -> Float? {
         // ⭐ Stage 1: 0-0.5秒 - 不召回，讓玩家有時間重新定位右手
         if pressDuration < 0.5 {
             return nil
         }
 
-        // ⭐ Stage 2: 0.5-1.5秒 - 固定 1m/s 召回速度
+        // ⭐ Stage 2: 0.5-1.5秒 - 固定初始召回速度
         if pressDuration < 1.5 {
-            return 1.0
+            return config.recallSpeed
         }
 
         // ⭐ Stage 3: 1.5秒以上 - 速度遞增
-        // 1.5s = 1m/s
-        // 2.5s = 2m/s
-        // 3.5s = 3m/s
-        // ...
-        // 最大 10000m/s
-        let additionalSeconds = pressDuration - 1.5
-        let speed = 1.0 + Float(additionalSeconds)
-        return min(speed, 10000.0)
+        // 使用配置的 maxRecallSpeedTime 來控制加速時間
+        // 例如：maxRecallSpeedTime = 6.0 表示從 1.5s 到 6.0s 之間線性加速到最大速度
+        let accelerationDuration = config.maxRecallSpeedTime - 1.5
+        let timeSinceStage3 = pressDuration - 1.5
+
+        if accelerationDuration > 0 {
+            // 線性插值：從 recallSpeed 到 maxRecallSpeed
+            let progress = min(1.0, Float(timeSinceStage3 / accelerationDuration))
+            let speed = config.recallSpeed + (config.maxRecallSpeed - config.recallSpeed) * progress
+            return speed
+        } else {
+            // 如果 maxRecallSpeedTime <= 1.5，直接返回最大速度
+            return config.maxRecallSpeed
+        }
     }
 
     private func checkPinchGestureAndRecallSword(in scene: RealityKit.Scene?) {
