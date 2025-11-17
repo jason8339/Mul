@@ -185,8 +185,9 @@ struct EnemySystem: System {
                         let damageValue = damage
                         let rootRef = Self.sceneRoot
                         let fingerPos = HandTrackingSystem.rightIndexTipPosition  // 當前手指位置
+                        let swordVelocity = velocity  // 飛劍速度（m/s）
                         Task { @MainActor in
-                            DamageTextSystem.showDamageText(damage: damageValue, at: damageTextPos, playerFingerPosition: fingerPos, sceneRoot: rootRef)
+                            DamageTextSystem.showDamageText(damage: damageValue, at: damageTextPos, playerFingerPosition: fingerPos, sceneRoot: rootRef, swordSpeed: swordVelocity)
                         }
 
                         // 如果敵人死亡，1秒淡出後移除
@@ -441,7 +442,7 @@ struct EnemySystem: System {
         )
         let fingerPos = HandTrackingSystem.rightIndexTipPosition
         Task { @MainActor in
-            DamageTextSystem.showDamageText(damage: damage, at: damageTextPos, playerFingerPosition: fingerPos, sceneRoot: Self.sceneRoot)
+            DamageTextSystem.showDamageText(damage: damage, at: damageTextPos, playerFingerPosition: fingerPos, sceneRoot: Self.sceneRoot, swordSpeed: velocity)
         }
 
         // 如果敵人死亡，從場景中移除
