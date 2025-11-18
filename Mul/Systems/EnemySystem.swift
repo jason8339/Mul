@@ -1,12 +1,18 @@
 import RealityKit
 import RealityKitContent
 import Foundation
+import UIKit
 
 /// 敵人管理系統
 struct EnemySystem: System {
 
     /// 查詢所有帶有 EnemyComponent 的實體
     static let query = EntityQuery(where: .has(EnemyComponent.self))
+
+    // MARK: - 配置
+
+    /// 當前使用的敵人配置
+    static var config: EnemyConfig = .default
 
     // MARK: - 生成配置
 
@@ -73,6 +79,16 @@ struct EnemySystem: System {
                 }
                 Self.sceneRoot = root
                 print("✅ 從手部追蹤找到場景根實體: \(root.name)")
+
+                // 調試：打印場景中所有實體
+                Task { @MainActor in
+                    print("🔍 場景根實體的所有子實體:")
+                    root.children.forEach { child in
+                        let bounds = child.visualBounds(relativeTo: nil)
+                        print("  - \(child.name) | 位置: \(child.position(relativeTo: nil)) | 邊界Y: [\(bounds.min.y), \(bounds.max.y)]")
+                    }
+                }
+
                 foundRoot = true
                 break
             }
@@ -308,28 +324,68 @@ struct EnemySystem: System {
         // 設置位置
         enemyEntity.position = spawnPosition
 
-        // 設置大小（放大五倍）
-        enemyEntity.scale = SIMD3<Float>(repeating: 5.0)
+        // 設置大小（使用配置）
+        enemyEntity.scale = SIMD3<Float>(repeating: config.scale)
+
+        // 保持模型原始旋轉（Reality Composer Pro 已經處理好 Up Axis 對齊）
+        print("ℹ️ 保持模型原始旋轉: \(enemyEntity.orientation)")
 
         // 調試：打印敵人的邊界框
         let bounds = enemyEntity.visualBounds(relativeTo: nil)
-        print("📦 敵人邊界框: min=\(bounds.min), max=\(bounds.max)")
-        print("📦 敵人尺寸: \(bounds.max - bounds.min)")
+        let modelSize = bounds.max - bounds.min
+        print("📦 敵人視覺邊界框: min=\(bounds.min), max=\(bounds.max)")
+        print("📦 敵人模型實際尺寸 (套用 scale 後): X=\(String(format: "%.3f", modelSize.x))m, Y=\(String(format: "%.3f", modelSize.y))m, Z=\(String(format: "%.3f", modelSize.z))m")
+        print("📦 敵人模型原始尺寸 (scale=1 時): X=\(String(format: "%.3f", modelSize.x / config.scale))m, Y=\(String(format: "%.3f", modelSize.y / config.scale))m, Z=\(String(format: "%.3f", modelSize.z / config.scale))m")
 
-        // 添加 EnemyComponent
-        enemyEntity.components.set(EnemyComponent())
+        // 添加 EnemyComponent（使用配置的屬性）
+        enemyEntity.components.set(EnemyComponent(
+            maxHealth: config.maxHealth,
+            moveSpeed: config.moveSpeed
+        ))
 
         // 添加碰撞組件 - 使用 default 模式配合過濾器：只與飛劍觸發事件
         // 注意：碰撞箱會隨 entity.scale 自動縮放，所以這裡用原始小尺寸
         let enemyFilter = CollisionFilterSetup.setupEnemyCollision()
-        let collisionBoxSize: SIMD3<Float> = [0.15, 0.25, 0.15]
+        let collisionBoxSize = config.collisionBoxSize
+
+        // 重要：子實體不會自動繼承父實體的 scale
+        // 所以碰撞箱尺寸和偏移量都需要直接設為最終大小（原始值 * scale）
+        let actualCollisionBoxSize = collisionBoxSize * config.scale
+        let actualCollisionBoxOffset = config.collisionBoxOffset * config.scale
+
+        // 創建帶有偏移的碰撞箱形狀
+        let boxShape = ShapeResource.generateBox(size: actualCollisionBoxSize).offsetBy(translation: actualCollisionBoxOffset)
+
         let collision = CollisionComponent(
-            shapes: [.generateBox(size: collisionBoxSize)],
+            shapes: [boxShape],
             mode: .default,  // default 模式確保碰撞事件觸發
             filter: enemyFilter  // 過濾器：只與飛劍產生事件
         )
         enemyEntity.components.set(collision)
-        print("📦 敵人碰撞箱原始大小: \(collisionBoxSize)，實際大小（scale=5.0）: \(collisionBoxSize * 5.0)")
+
+        // 調試：打印碰撞箱詳細信息
+        print("🔍 碰撞箱調試信息:")
+        print("  - 碰撞箱尺寸: \(actualCollisionBoxSize)")
+        print("  - 碰撞箱偏移: \(actualCollisionBoxOffset)")
+        print("  - enemyEntity.scale: \(enemyEntity.scale)")
+        print("  - collision.shapes.count: \(collision.shapes.count)")
+
+        // 如果啟用碰撞箱可視化，添加白色方塊
+        if config.showCollisionBox {
+            let boxMesh = MeshResource.generateBox(size: actualCollisionBoxSize)
+            let wireframeMaterial = UnlitMaterial(color: .white.withAlphaComponent(0.5))
+
+            let visualBox = ModelEntity(mesh: boxMesh, materials: [wireframeMaterial])
+            visualBox.position = actualCollisionBoxOffset  // 應用相同的偏移
+            enemyEntity.addChild(visualBox)
+            print("👁️ 碰撞箱可視化已啟用（白色半透明方框）")
+        }
+        let actualCollisionSize = collisionBoxSize * config.scale
+        let actualCollisionOffset = config.collisionBoxOffset * config.scale
+        print("📦 敵人碰撞箱原始設定: X=\(String(format: "%.3f", collisionBoxSize.x))m, Y=\(String(format: "%.3f", collisionBoxSize.y))m, Z=\(String(format: "%.3f", collisionBoxSize.z))m")
+        print("📦 敵人碰撞箱實際大小 (scale=\(config.scale) 後): X=\(String(format: "%.3f", actualCollisionSize.x))m, Y=\(String(format: "%.3f", actualCollisionSize.y))m, Z=\(String(format: "%.3f", actualCollisionSize.z))m")
+        print("📦 敵人碰撞箱偏移: X=\(String(format: "%.3f", actualCollisionOffset.x))m, Y=\(String(format: "%.3f", actualCollisionOffset.y))m, Z=\(String(format: "%.3f", actualCollisionOffset.z))m")
+        print("📦 建議碰撞箱設定 (覆蓋模型80%): X=\(String(format: "%.3f", modelSize.x / config.scale * 0.8))m, Y=\(String(format: "%.3f", modelSize.y / config.scale * 0.8))m, Z=\(String(format: "%.3f", modelSize.z / config.scale * 0.8))m")
 
         // ⭐ 添加 kinematic 物理組件：可以觸發碰撞事件，但不受物理影響
         let physicsBody = PhysicsBodyComponent(
@@ -354,20 +410,32 @@ struct EnemySystem: System {
         let halfSize = Self.spawnAreaSize / 2.0
 
         for _ in 0..<maxAttempts {
-            // 在 30m x 30m 範圍內隨機生成
+            // 場景是 Z-up（高度在 Z 軸）
+            // 在 30m x 30m 範圍內隨機生成 X 和 Y（Y 現在是深度方向）
             let randomX = Float.random(in: -halfSize...halfSize)
-            let randomZ = Float.random(in: -halfSize...halfSize)
+            let randomY = Float.random(in: -halfSize...halfSize)
 
-            // 地板頂部在 Y=-0.05，敵人高度 1.25m
-            // 碰撞箱底部在地板上，中心點在 -0.05 + 0.625 = 0.575
-            let randomY: Float = 0.575
+            // 地板在 Z=0 附近
+            // 敵人模型中心在幾何中心，高度 = collisionBoxSize.z (因為 Z 是高度)
+            // 所以 Z 位置 = 地板高度 + 模型高度的一半
+            let floorZ: Float = 0.0
+            let modelHalfHeight = config.collisionBoxSize.z / 2.0
+            let spawnZ = floorZ + modelHalfHeight
 
-            let position = SIMD3<Float>(randomX, randomY, randomZ)
+            let position = SIMD3<Float>(randomX, randomY, spawnZ)
 
             // 檢查是否在玩家 10m 範圍外
             let distanceToPlayer = length(position - playerPosition)
+
+            print("🔍 生成位置: (\(String(format: "%.2f", randomX)), \(String(format: "%.2f", randomY)), \(String(format: "%.2f", spawnZ)))")
+            print("   玩家位置: (\(String(format: "%.2f", playerPosition.x)), \(String(format: "%.2f", playerPosition.y)), \(String(format: "%.2f", playerPosition.z)))")
+            print("   距離: \(String(format: "%.2f", distanceToPlayer))m (需要 >= \(Self.playerExclusionRadius)m)")
+
             if distanceToPlayer >= Self.playerExclusionRadius {
+                print("✅ 位置符合要求，生成敵人")
                 return position
+            } else {
+                print("❌ 距離太近，重新選擇位置")
             }
         }
 

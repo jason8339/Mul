@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(xcodebuild:*)",
-      "Bash(swift -parse:*)"
+      "Bash(swift -parse:*)",
+      "Bash(cat:*)"
     ],
     "deny": [],
     "ask": []
