@@ -14,16 +14,22 @@ struct EnemySystem: System {
     /// 當前使用的敵人配置
     static var config: EnemyConfig = .default
 
-    // MARK: - 生成配置
+    // MARK: - 生成配置（從 GameSettings 讀取）
 
-    /// 生成間隔（秒）
-    private static let spawnInterval: TimeInterval = 10.0
+    /// 生成間隔（秒）- 從 GameSettings 讀取
+    private static var spawnInterval: TimeInterval {
+        GameSettings.shared.enemySpawnInterval
+    }
 
-    /// 生成區域範圍（正方形，單位：米）
-    private static let spawnAreaSize: Float = 30.0
+    /// 生成區域範圍（正方形，單位：米）- 從 GameSettings 讀取
+    private static var spawnAreaSize: Float {
+        Float(GameSettings.shared.enemySpawnAreaSize)
+    }
 
-    /// 玩家附近的排除範圍（單位：米）
-    private static let playerExclusionRadius: Float = 10.0
+    /// 玩家附近的排除範圍（單位：米）- 從 GameSettings 讀取
+    private static var playerExclusionRadius: Float {
+        Float(GameSettings.shared.enemyPlayerExclusionRadius)
+    }
 
     /// 上次生成時間
     private static var lastSpawnTime: TimeInterval = 0
@@ -150,8 +156,8 @@ struct EnemySystem: System {
                 let swordPos = sword.position(relativeTo: nil)
                 let distance = length(enemyPos - swordPos)
 
-                // 碰撞箱半徑：敵人 0.75m（實際碰撞箱寬度的一半） + 飛劍 0.4m（劍長的一半）
-                let collisionRadius: Float = 0.75 + 0.4
+                // 碰撞箱半徑：從 GameSettings 讀取
+                let collisionRadius = Float(GameSettings.shared.enemyCollisionRadius)
 
                 if distance < collisionRadius {
                     // 檢查是否應該造成傷害（每1cm一次）
@@ -181,7 +187,8 @@ struct EnemySystem: System {
                         let mass = swordComponent.config.swordWeight
                         let velocity = length(swordComponent.velocity)
                         let kineticEnergy = 0.5 * mass * velocity * velocity
-                        let damage = kineticEnergy * 10.0
+                        let damageMultiplier = Float(GameSettings.shared.enemyDamageMultiplier)
+                        let damage = kineticEnergy * damageMultiplier
 
                         print("⚔️ 手動檢測：飛劍擊中敵人！")
                         print("   距離: \(String(format: "%.2f", distance)) m")
@@ -292,6 +299,9 @@ struct EnemySystem: System {
             print("⚠️ 無法獲取玩家位置，跳過生成敵人")
             return
         }
+
+        // 從 GameSettings 獲取當前配置
+        let config = GameSettings.shared.getCurrentEnemyConfig()
 
         // 調試：打印玩家位置
         print("🎮 玩家位置: X=\(String(format: "%.2f", playerPosition.x)), Y=\(String(format: "%.2f", playerPosition.y)), Z=\(String(format: "%.2f", playerPosition.z))")
@@ -486,8 +496,9 @@ struct EnemySystem: System {
         let velocity = length(swordComponent.velocity)  // m/s
         let kineticEnergy = 0.5 * mass * velocity * velocity  // 焦耳
 
-        // 將動能轉換為傷害值（可以調整比例）
-        let damage = kineticEnergy * 10.0  // 假設 1 焦耳 = 10 點傷害
+        // 將動能轉換為傷害值（從 GameSettings 讀取倍數）
+        let damageMultiplier = Float(GameSettings.shared.enemyDamageMultiplier)
+        let damage = kineticEnergy * damageMultiplier  // 1 焦耳 = N 點傷害
 
         print("⚔️ 飛劍擊中敵人！")
         print("   質量: \(String(format: "%.2f", mass)) kg")

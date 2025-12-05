@@ -7,6 +7,8 @@
     "\/RealityKitContent\/Sources\/RealityKitContent\/RealityKitContent.rkassets\/Scene.usda" : "0A9B4653-B11E-4D6A-850E-C6FCB621626C",
     "\/RealityKitContent\/Sources\/RealityKitContent\/RealityKitContent.rkassets\/Untitled Scene.usda" : "03E02005-EFA6-48D6-8A76-05B2822A74E9",
     "\/RealityKitContent\/Sources\/RealityKitContent\/RealityKitContent.rkassets\/procedural_sphere_grid.usda" : "34C460AE-CA1B-4348-BD05-621ACBDFFE97",
+    "RealityKitContent\/Sources\/RealityKitContent\/RealityKitContent.rkassets\/Altar.usdc" : "21F3367F-1229-4893-8661-F413921C2140",
+    "RealityKitContent\/Sources\/RealityKitContent\/RealityKitContent.rkassets\/Altar\/Altar.usdc" : "A9616FB5-CC5A-41CF-9B91-B10924D61931",
     "RealityKitContent\/Sources\/RealityKitContent\/RealityKitContent.rkassets\/Budokan.usda" : "461AEC99-AA8B-487B-BAD8-46EF24D0C31D",
     "RealityKitContent\/Sources\/RealityKitContent\/RealityKitContent.rkassets\/Budokan.usdc" : "26B506FE-7E3A-4A1C-B567-43E49D962529",
     "RealityKitContent\/Sources\/RealityKitContent\/RealityKitContent.rkassets\/BudokanV2.usdc" : "E3E490AA-0A9B-4E4E-BD5A-06696D7E03F0",
@@ -17,20 +19,24 @@
     "RealityKitContent\/Sources\/RealityKitContent\/RealityKitContent.rkassets\/Sword_No1.usdc" : "00D158A0-B352-4D98-B0C4-BEA938925528",
     "RealityKitContent\/Sources\/RealityKitContent\/RealityKitContent.rkassets\/Test scene.usdc" : "0FEBACCA-8C40-4F24-8670-C884EBF80266",
     "RealityKitContent\/Sources\/RealityKitContent\/RealityKitContent.rkassets\/procedural_sphere_grid.usda" : "1CBF3893-ABFD-408C-8B91-045BFD257808",
-    "RealityKitContent\/Sources\/RealityKitContent\/RealityKitContent.rkassets\/testworld.usdc" : "230A6DE5-BDA5-4366-9FAC-DD19745A17DE"
+    "RealityKitContent\/Sources\/RealityKitContent\/RealityKitContent.rkassets\/testworld.usdc" : "230A6DE5-BDA5-4366-9FAC-DD19745A17DE",
+    "RealityKitContent\/Sources\/RealityKitContent\/RealityKitContent.rkassets\/textures\/step.usdc" : "14AB67F1-E410-4B27-8733-BF1C4F9C5282"
   },
   "projectID" : 7594014822474971321,
   "uuidToIntID" : {
     "00D158A0-B352-4D98-B0C4-BEA938925528" : -7187645409436035626,
     "0FEBACCA-8C40-4F24-8670-C884EBF80266" : 24692230472441304,
+    "14AB67F1-E410-4B27-8733-BF1C4F9C5282" : 1532600193934020893,
     "151A58B5-1BFC-4AB2-AB65-BB71CA9A58F2" : 563902883358926836,
     "1BBB8F43-616E-4730-8525-4DDBDCF34A7A" : 4041067995102755665,
+    "21F3367F-1229-4893-8661-F413921C2140" : -1646338785178802325,
     "230A6DE5-BDA5-4366-9FAC-DD19745A17DE" : 8522890069862245174,
     "26B506FE-7E3A-4A1C-B567-43E49D962529" : 5709412544049555648,
     "26DBAE76-5DD8-47B6-A085-1B4ADA111097" : -1473471793054915709,
     "461AEC99-AA8B-487B-BAD8-46EF24D0C31D" : 8161263984236032146,
     "5CF28135-2DA9-48A0-ABA0-5313EFD51C1F" : -4041224458961551471,
     "80E4AF8A-7483-404E-A458-6391486A5761" : 6478056547702131506,
+    "A9616FB5-CC5A-41CF-9B91-B10924D61931" : 6363828443806948908,
     "AE80AD4F-BB0A-41D0-9BB0-275E322A25E8" : -4776875029653254720,
     "E3E490AA-0A9B-4E4E-BD5A-06696D7E03F0" : -8600818832434606235
   }

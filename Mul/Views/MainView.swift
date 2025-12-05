@@ -10,12 +10,13 @@ struct MainView: View {
     // 追蹤沉浸式空間是否已開啟（僅用於 UI 與避免重複動作）
     @State private var isImmersiveSpaceOpen = false
     @State private var isOpeningOrClosing = false
+    @State private var showSettings = false
 
     // 地圖選擇（使用 AppStorage 以便與 ImmersiveSpace 共享）
-    @AppStorage("selectedMap") private var selectedMapRaw: String = MapType.oldfactory.rawValue
+    @AppStorage("selectedMap") private var selectedMapRaw: String = MapType.budokan.rawValue
 
     private var selectedMap: MapType {
-        get { MapType(rawValue: selectedMapRaw) ?? .oldfactory }
+        get { MapType(rawValue: selectedMapRaw) ?? .budokan }
         set { selectedMapRaw = newValue.rawValue }
     }
 
@@ -26,23 +27,34 @@ struct MainView: View {
 
     // 地圖類型枚舉
     enum MapType: String, CaseIterable, Identifiable {
-        case oldfactory = "Oldfactory"
         case budokan = "Budokan"
+        case altar = "Altar"
 
         var id: String { rawValue }
 
         var displayName: String {
             switch self {
-            case .oldfactory: return "🏭 Oldfactory"
             case .budokan: return "🏯 Budokan"
+            case .altar: return "🗿 遺跡 Altar"
             }
         }
     }
 
     var body: some View {
         VStack(spacing: 16) {
-            Text("Hand Tracking Example")
-                .font(.title)
+            HStack {
+                Text("Hand Tracking Example")
+                    .font(.title)
+
+                Spacer()
+
+                Button(action: {
+                    showSettings = true
+                }) {
+                    Label("設定", systemImage: "gearshape.fill")
+                }
+            }
+            .padding(.horizontal)
 
             // 地圖選擇器
             VStack(spacing: 8) {
@@ -124,6 +136,9 @@ struct MainView: View {
                 }
                 .disabled(!isImmersiveSpaceOpen || isOpeningOrClosing)
             }
+        }
+        .sheet(isPresented: $showSettings) {
+            SettingsView()
         }
         // 當 MainView 消失時，確保關閉 ImmersiveSpace（1. 自動關閉）
         .onDisappear {

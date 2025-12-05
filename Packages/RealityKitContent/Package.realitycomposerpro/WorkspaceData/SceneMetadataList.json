@@ -21,7 +21,7 @@
       [
         "0A9B4653-B11E-4D6A-850E-C6FCB621626C",
         "Root",
-        "GridMaterial"
+        "Sphere"
       ],
       {
         "isExpanded" : true,
@@ -30,7 +30,7 @@
       [
         "0A9B4653-B11E-4D6A-850E-C6FCB621626C",
         "Root",
-        "Sphere"
+        "GridMaterial"
       ],
       {
         "isExpanded" : true,
@@ -72,12 +72,271 @@
 
     ]
   },
+  "21F3367F-1229-4893-8661-F413921C2140" : {
+    "objectMetadataList" : [
+      [
+        "21F3367F-1229-4893-8661-F413921C2140",
+        "root",
+        "SkySphere"
+      ],
+      {
+        "disallowsFraming" : true,
+        "isExpanded" : false,
+        "isLocked" : false
+      },
+      [
+        "21F3367F-1229-4893-8661-F413921C2140",
+        "root",
+        "Cube_003"
+      ],
+      {
+        "isExpanded" : true,
+        "isLocked" : false
+      },
+      [
+        "21F3367F-1229-4893-8661-F413921C2140",
+        "root",
+        "Cube_002"
+      ],
+      {
+        "isExpanded" : true,
+        "isLocked" : false
+      },
+      [
+        "21F3367F-1229-4893-8661-F413921C2140",
+        "root",
+        "step1",
+        "Camera"
+      ],
+      {
+        "isExpanded" : true,
+        "isLocked" : false
+      },
+      [
+        "21F3367F-1229-4893-8661-F413921C2140",
+        "root",
+        "ParticleEmitter"
+      ],
+      {
+        "disallowsFraming" : false,
+        "isExpanded" : false,
+        "isLocked" : false
+      },
+      [
+        "21F3367F-1229-4893-8661-F413921C2140",
+        "root",
+        "step",
+        "Cube",
+        "Cube"
+      ],
+      {
+        "isExpanded" : true,
+        "isLocked" : false
+      },
+      [
+        "21F3367F-1229-4893-8661-F413921C2140",
+        "root",
+        "Campfire1"
+      ],
+      {
+        "disallowsFraming" : false,
+        "isExpanded" : false,
+        "isLocked" : false
+      },
+      [
+        "21F3367F-1229-4893-8661-F413921C2140",
+        "root",
+        "Cube_001"
+      ],
+      {
+        "isExpanded" : true,
+        "isLocked" : false
+      },
+      [
+        "21F3367F-1229-4893-8661-F413921C2140",
+        "root",
+        "step1",
+        "_materials"
+      ],
+      {
+        "isExpanded" : true,
+        "isLocked" : false
+      },
+      [
+        "21F3367F-1229-4893-8661-F413921C2140",
+        "root",
+        "step_1",
+        "Cube"
+      ],
+      {
+        "isExpanded" : true,
+        "isLocked" : false
+      },
+      [
+        "21F3367F-1229-4893-8661-F413921C2140",
+        "root",
+        "campfire",
+        "_materials"
+      ],
+      {
+        "isExpanded" : true,
+        "isLocked" : false
+      },
+      [
+        "21F3367F-1229-4893-8661-F413921C2140",
+        "root",
+        "step1"
+      ],
+      {
+        "isExpanded" : true,
+        "isLocked" : false
+      },
+      [
+        "21F3367F-1229-4893-8661-F413921C2140",
+        "root",
+        "Cube_029"
+      ],
+      {
+        "disallowsFraming" : false,
+        "isExpanded" : false,
+        "isLocked" : false
+      },
+      [
+        "21F3367F-1229-4893-8661-F413921C2140",
+        "root"
+      ],
+      {
+        "isExpanded" : true,
+        "isLocked" : false
+      },
+      [
+        "21F3367F-1229-4893-8661-F413921C2140",
+        "root",
+        "step",
+        "Cube"
+      ],
+      {
+        "isExpanded" : true,
+        "isLocked" : false
+      },
+      [
+        "21F3367F-1229-4893-8661-F413921C2140",
+        "root",
+        "step_1",
+        "Cube",
+        "Mesh"
+      ],
+      {
+        "isExpanded" : true,
+        "isLocked" : false
+      },
+      [
+        "21F3367F-1229-4893-8661-F413921C2140",
+        "root",
+        "Cube_029",
+        "Cube_033"
+      ],
+      {
+        "disallowsFraming" : false,
+        "isExpanded" : false,
+        "isLocked" : false
+      },
+      [
+        "21F3367F-1229-4893-8661-F413921C2140",
+        "root",
+        "_materials"
+      ],
+      {
+        "isExpanded" : true,
+        "isLocked" : false
+      },
+      [
+        "21F3367F-1229-4893-8661-F413921C2140",
+        "root",
+        "campfire",
+        "Sphere"
+      ],
+      {
+        "isExpanded" : true,
+        "isLocked" : false
+      },
+      [
+        "21F3367F-1229-4893-8661-F413921C2140",
+        "root",
+        "Cube"
+      ],
+      {
+        "isExpanded" : true,
+        "isLocked" : false
+      },
+      [
+        "21F3367F-1229-4893-8661-F413921C2140",
+        "root",
+        "campfire",
+        "Camera"
+      ],
+      {
+        "isExpanded" : true,
+        "isLocked" : false
+      },
+      [
+        "21F3367F-1229-4893-8661-F413921C2140",
+        "root",
+        "step_1",
+        "_materials"
+      ],
+      {
+        "isExpanded" : true,
+        "isLocked" : false
+      },
+      [
+        "21F3367F-1229-4893-8661-F413921C2140",
+        "root",
+        "step1",
+        "Cube"
+      ],
+      {
+        "isExpanded" : true,
+        "isLocked" : false
+      },
+      [
+        "21F3367F-1229-4893-8661-F413921C2140",
+        "root",
+        "step",
+        "_materials"
+      ],
+      {
+        "isExpanded" : true,
+        "isLocked" : false
+      },
+      [
+        "21F3367F-1229-4893-8661-F413921C2140",
+        "root",
+        "campfire"
+      ],
+      {
+        "isExpanded" : true,
+        "isLocked" : false
+      },
+      [
+        "21F3367F-1229-4893-8661-F413921C2140",
+        "root",
+        "step",
+        "Cube",
+        "Mesh"
+      ],
+      {
+        "isExpanded" : true,
+        "isLocked" : false
+      }
+    ]
+  },
   "230A6DE5-BDA5-4366-9FAC-DD19745A17DE" : {
     "objectMetadataList" : [
       [
         "230A6DE5-BDA5-4366-9FAC-DD19745A17DE",
         "root",
-        "Material_1"
+        "Material_2"
       ],
       {
         "isExpanded" : true,
@@ -86,7 +345,7 @@
       [
         "230A6DE5-BDA5-4366-9FAC-DD19745A17DE",
         "root",
-        "Material_2"
+        "Material_1"
       ],
       {
         "isExpanded" : true,
@@ -108,7 +367,24 @@
       [
         "26B506FE-7E3A-4A1C-B567-43E49D962529",
         "root",
+        "Plane"
+      ],
+      {
+        "isExpanded" : true,
+        "isLocked" : false
+      },
+      [
+        "26B506FE-7E3A-4A1C-B567-43E49D962529",
+        "root",
         "平面"
+      ],
+      {
+        "isExpanded" : true,
+        "isLocked" : false
+      },
+      [
+        "26B506FE-7E3A-4A1C-B567-43E49D962529",
+        "root"
       ],
       {
         "isExpanded" : true,
@@ -126,33 +402,16 @@
       [
         "26B506FE-7E3A-4A1C-B567-43E49D962529",
         "root",
-        "平面_001"
-      ],
-      {
-        "isExpanded" : true,
-        "isLocked" : false
-      },
-      [
-        "26B506FE-7E3A-4A1C-B567-43E49D962529",
-        "root"
-      ],
-      {
-        "isExpanded" : true,
-        "isLocked" : false
-      },
-      [
-        "26B506FE-7E3A-4A1C-B567-43E49D962529",
-        "root",
-        "Plane"
-      ],
-      {
-        "isExpanded" : true,
-        "isLocked" : false
-      },
-      [
-        "26B506FE-7E3A-4A1C-B567-43E49D962529",
-        "root",
         "Plane_005"
+      ],
+      {
+        "isExpanded" : true,
+        "isLocked" : false
+      },
+      [
+        "26B506FE-7E3A-4A1C-B567-43E49D962529",
+        "root",
+        "平面_001"
       ],
       {
         "isExpanded" : true,
@@ -198,6 +457,15 @@
       {
         "isExpanded" : true,
         "isLocked" : false
+      },
+      [
+        "461AEC99-AA8B-487B-BAD8-46EF24D0C31D",
+        "Root",
+        "Blender_Budokan"
+      ],
+      {
+        "isExpanded" : true,
+        "isLocked" : false
       }
     ]
   },
@@ -225,11 +493,114 @@
       }
     ]
   },
+  "A9616FB5-CC5A-41CF-9B91-B10924D61931" : {
+    "objectMetadataList" : [
+      [
+        "A9616FB5-CC5A-41CF-9B91-B10924D61931",
+        "root"
+      ],
+      {
+        "isExpanded" : true,
+        "isLocked" : false
+      },
+      [
+        "A9616FB5-CC5A-41CF-9B91-B10924D61931",
+        "root",
+        "Cube_049"
+      ],
+      {
+        "isExpanded" : true,
+        "isLocked" : false
+      },
+      [
+        "A9616FB5-CC5A-41CF-9B91-B10924D61931",
+        "root",
+        "Cube_105"
+      ],
+      {
+        "isExpanded" : true,
+        "isLocked" : false
+      },
+      [
+        "A9616FB5-CC5A-41CF-9B91-B10924D61931",
+        "root",
+        "Cube_029"
+      ],
+      {
+        "isExpanded" : true,
+        "isLocked" : false
+      },
+      [
+        "A9616FB5-CC5A-41CF-9B91-B10924D61931",
+        "root",
+        "Cube_112"
+      ],
+      {
+        "isExpanded" : true,
+        "isLocked" : false
+      },
+      [
+        "A9616FB5-CC5A-41CF-9B91-B10924D61931",
+        "root",
+        "Cube_003"
+      ],
+      {
+        "isExpanded" : true,
+        "isLocked" : false
+      },
+      [
+        "A9616FB5-CC5A-41CF-9B91-B10924D61931",
+        "root",
+        "Cube"
+      ],
+      {
+        "isExpanded" : true,
+        "isLocked" : false
+      },
+      [
+        "A9616FB5-CC5A-41CF-9B91-B10924D61931",
+        "root",
+        "Cube_001"
+      ],
+      {
+        "isExpanded" : true,
+        "isLocked" : false
+      },
+      [
+        "A9616FB5-CC5A-41CF-9B91-B10924D61931",
+        "root",
+        "Cube_050"
+      ],
+      {
+        "isExpanded" : true,
+        "isLocked" : false
+      },
+      [
+        "A9616FB5-CC5A-41CF-9B91-B10924D61931",
+        "root",
+        "Altarscene"
+      ],
+      {
+        "isExpanded" : true,
+        "isLocked" : false
+      },
+      [
+        "A9616FB5-CC5A-41CF-9B91-B10924D61931",
+        "root",
+        "Cube_055"
+      ],
+      {
+        "isExpanded" : true,
+        "isLocked" : false
+      }
+    ]
+  },
   "AE80AD4F-BB0A-41D0-9BB0-275E322A25E8" : {
     "objectMetadataList" : [
       [
         "AE80AD4F-BB0A-41D0-9BB0-275E322A25E8",
-        "Root"
+        "Root",
+        "Ghost"
       ],
       {
         "isExpanded" : true,
@@ -237,9 +608,7 @@
       },
       [
         "AE80AD4F-BB0A-41D0-9BB0-275E322A25E8",
-        "Root",
-        "Ghost",
-        "Mesh_0"
+        "Root"
       ],
       {
         "isExpanded" : true,
@@ -258,7 +627,8 @@
       [
         "AE80AD4F-BB0A-41D0-9BB0-275E322A25E8",
         "Root",
-        "Ghost"
+        "Ghost",
+        "Mesh_0"
       ],
       {
         "isExpanded" : true,

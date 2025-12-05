@@ -201,8 +201,8 @@ extension FlyingSwordConfig {
         swordWeight: 1,               // 1000克
         swordLength: 0.8,                // 80公分
         velocityThreshold: 0.3,          // 0.2 m/s
-        velocityMultiplier: 5,         // 2倍速度
-        minFlyingSpeed: 1,             // 0.1 m/s
+        velocityMultiplier: 10,         // 2倍速度
+        minFlyingSpeed: 2,             // 0.1 m/s
         maxFlyingTime: 10000.0,              // 8秒
         dragCoefficient: 0.0,            // 無阻力
         gravity: 0.0,                    // 無重力
@@ -214,14 +214,14 @@ extension FlyingSwordConfig {
         minEffectiveWindow: 0.15,        // 0.15秒最小窗口
         minSamplesForLaunch: 5,          // 至少5個樣本
         launchCooldown: 0.8,             // 0.8秒冷卻
-        remoteControlStrength: 1.2,      // 120%遙控強度
+        remoteControlStrength: 2.2,      // 120%遙控強度
         fingerInfluenceRatio: 2.5,       // 2.5倍手指影響
         maxRemoteControlDistance: 100.0, // 100公尺最大距離
         maxVelocityChange: 5.0,         // 15 m/s 最大變化
         maxFingerHistoryCount: 10,       // 10個手指樣本
         minFingerSampleInterval: 1.0 / 30.0,  // 30 FPS
-        collisionDetectionDelay: 1.0,    // 1秒後才開始碰撞檢測
-        autoReturnDistance: 0.05,        // 5公分自動返回
+        collisionDetectionDelay: 0.5,    // 1秒後才開始碰撞檢測
+        autoReturnDistance: 0.1,        // 5公分自動返回
         autoReturnDelay: 1.0,            // 1秒後才檢測自動返回
         pinchGestureThreshold: 0.02,     // 2公分捏合識別
         recallSpeed: 1,                // 0.5 m/s 召回初始速度

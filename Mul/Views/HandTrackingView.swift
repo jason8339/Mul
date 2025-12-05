@@ -6,7 +6,7 @@ import ARKit
 /// A reality view that contains all hand-tracking entities.
 struct HandTrackingView: View {
     // 從 AppStorage 讀取選擇的地圖
-    @AppStorage("selectedMap") private var selectedMapName: String = "Oldfactory"
+    @AppStorage("selectedMap") private var selectedMapName: String = "Budokan"
 
     /// The main body of the view.
     var body: some View {
@@ -40,6 +40,10 @@ struct HandTrackingView: View {
             addInvisibleFloor(to: content)
 
             content.add(scene)
+
+            // 根據場景設定曝光值（添加遮罩）
+            applySceneExposure(to: content)
+
             print("✅ 场景 '\(selectedMapName)' 加载成功")
         } catch {
             print("❌ 加载场景失败: \(error)")
@@ -164,6 +168,55 @@ struct HandTrackingView: View {
             print("   2. 所有ModelEntity尺寸太小")
             print("   3. 场景加载失败")
         }
+    }
+
+    /// 根據場景名稱設定曝光值（通過添加遮罩）
+    @MainActor
+    func applySceneExposure(to content: any RealityViewContentProtocol) {
+        // 根據場景設定不同的曝光值
+        let exposureValue: Float
+        let darknessAlpha: Float  // 黑色遮罩的不透明度
+
+        switch selectedMapName {
+        case "Altar":
+            exposureValue = -3.0  // 昏暗的遺跡場景
+            // -3 EV 意味著 1/8 的亮度，所以遮罩需要擋住 87.5% 的光線
+            darknessAlpha = 1.0 - pow(2.0, exposureValue)  // 0.875
+            print("🌙 設定 Altar 場景曝光值: \(exposureValue) EV (darkness: \(darknessAlpha))")
+        case "Budokan":
+            exposureValue = 0.0   // 標準曝光
+            darknessAlpha = 0.0   // 無遮罩
+            print("☀️ 設定 Budokan 場景曝光值: \(exposureValue) EV")
+        default:
+            exposureValue = 0.0
+            darknessAlpha = 0.0
+            print("☀️ 設定預設場景曝光值: \(exposureValue) EV")
+        }
+
+        // 只在需要變暗時添加遮罩
+        if darknessAlpha > 0.01 {
+            // 創建一個巨大的半透明黑色球體包圍整個場景
+            let darknessMaterial = SimpleMaterial(
+                color: UIColor(white: 0, alpha: CGFloat(darknessAlpha)),
+                isMetallic: false
+            )
+
+            // 使用一個大球體作為遮罩（半徑50米，包圍整個場景）
+            let darknessOverlay = ModelEntity(
+                mesh: .generateSphere(radius: 50),
+                materials: [darknessMaterial]
+            )
+
+            // 反轉球體，讓黑色面向內部
+            darknessOverlay.scale *= SIMD3<Float>(repeating: -1)
+            darknessOverlay.position = [0, 0, 0]
+            darknessOverlay.name = "DarknessOverlay"
+
+            content.add(darknessOverlay)
+            print("   🌑 已添加黑暗遮罩 (alpha: \(darknessAlpha))")
+        }
+
+        print("✅ 曝光設定完成 (exposure: \(exposureValue) EV)")
     }
 
     /// 調整場景物體的材質，減少不需要的反射

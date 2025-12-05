@@ -4,8 +4,10 @@ import SwiftUI
 /// 傷害數字顯示工具
 enum DamageTextSystem {
 
-    /// 當前使用的配置
-    static var config: DamageTextConfig = .default
+    /// 當前使用的配置 - 從 GameSettings 即時讀取
+    static var config: DamageTextConfig {
+        GameSettings.shared.getCurrentDamageTextConfig()
+    }
 
     /// 上次顯示傷害的時間
     private static var lastDisplayTime: Date?

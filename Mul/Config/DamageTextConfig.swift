@@ -4,7 +4,7 @@ import Foundation
 struct DamageTextConfig {
 
     /// 文字大小（字體 size）
-    var fontSize: Float = 0.5
+    var fontSize: Float = 0.35
 
     /// 向上飄動速度（米/秒）
     var floatSpeed: Float = 1  // 預設 0.5m / 2秒 = 0.25 m/s

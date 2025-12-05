@@ -5,7 +5,7 @@ import simd
 struct EnemyConfig {
 
     /// 敵人的縮放比例（相對於原始模型大小）
-    var scale: Float = 1.0
+    var scale: Float = 0.5
 
     /// 敵人的最大血量
     var maxHealth: Float = 100.0

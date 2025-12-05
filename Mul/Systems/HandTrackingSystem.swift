@@ -268,14 +268,11 @@ struct HandTrackingSystem: System {
                                     swordEntity.components.set(collision)
                                     print("⚔️ 飛劍碰撞設定: mode=.default, filter.group=\(swordFilter.group), filter.mask=\(swordFilter.mask)")
 
-                                    // 2. 物理刚体组件（动态）
+                                    // 2. 物理刚体组件（动态）- 使用 GameSettings 配置
+                                    let settings = GameSettings.shared
                                     let physicsBody = PhysicsBodyComponent(
                                         massProperties: .init(mass: swordComponent.config.swordWeight),
-                                        material: .generate(
-                                            staticFriction: 0.2,
-                                            dynamicFriction: 0.1,
-                                            restitution: 0.7  // 彈性系數提高，使反彈更明顯
-                                        ),
+                                        material: settings.getPhysicsMaterial(),
                                         mode: .dynamic
                                     )
                                     swordEntity.components.set(physicsBody)
@@ -550,8 +547,9 @@ struct HandTrackingSystem: System {
                         let sword = try await Entity(named: "Sword_No1", in: RealityKitContent.realityKitContentBundle)
                         sword.name = "Sword_No1"
                         sword.scale = SIMD3<Float>(repeating: 0.3) // 稍微放大，方便觀察
-                        // 把 FlyingSwordComponent 直接掛在劍實體上
-                        sword.components.set(FlyingSwordComponent())
+                        // 把 FlyingSwordComponent 直接掛在劍實體上 - 使用 GameSettings 配置
+                        let currentConfig = GameSettings.shared.getCurrentFlyingSwordConfig()
+                        sword.components.set(FlyingSwordComponent(config: currentConfig))
                         // 將劍添加到手的根實體的父級（通常是場景的根實體）
                         if let parentEntity = handEntity.parent {
                             parentEntity.addChild(sword)
