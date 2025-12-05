@@ -41,8 +41,8 @@ struct HandTrackingView: View {
 
             content.add(scene)
 
-            // 根據場景設定曝光值（添加遮罩）
-            applySceneExposure(to: content)
+            // 根據場景設定曝光值（調整光源 + 天空球）
+            applySceneExposure(to: content, scene: scene)
 
             print("✅ 场景 '\(selectedMapName)' 加载成功")
         } catch {
@@ -170,53 +170,78 @@ struct HandTrackingView: View {
         }
     }
 
-    /// 根據場景名稱設定曝光值（通過添加遮罩）
+    /// 根據場景名稱設定環境光和天空
     @MainActor
-    func applySceneExposure(to content: any RealityViewContentProtocol) {
-        // 根據場景設定不同的曝光值
-        let exposureValue: Float
-        let darknessAlpha: Float  // 黑色遮罩的不透明度
+    func applySceneExposure(to content: any RealityViewContentProtocol, scene: Entity) {
+        // 根據場景設定不同的光照強度
+        let isDark: Bool
+        let lightMultiplier: Float
 
         switch selectedMapName {
         case "Altar":
-            exposureValue = -3.0  // 昏暗的遺跡場景
-            // -3 EV 意味著 1/8 的亮度，所以遮罩需要擋住 87.5% 的光線
-            darknessAlpha = 1.0 - pow(2.0, exposureValue)  // 0.875
-            print("🌙 設定 Altar 場景曝光值: \(exposureValue) EV (darkness: \(darknessAlpha))")
+            isDark = true
+            lightMultiplier = 0.125  // 1/8 亮度 (-3 EV)
+            print("🌙 設定 Altar 場景為昏暗模式 (光源強度: \(lightMultiplier))")
         case "Budokan":
-            exposureValue = 0.0   // 標準曝光
-            darknessAlpha = 0.0   // 無遮罩
-            print("☀️ 設定 Budokan 場景曝光值: \(exposureValue) EV")
+            isDark = false
+            lightMultiplier = 1.0  // 標準亮度
+            print("☀️ 設定 Budokan 場景為標準亮度")
         default:
-            exposureValue = 0.0
-            darknessAlpha = 0.0
-            print("☀️ 設定預設場景曝光值: \(exposureValue) EV")
+            isDark = false
+            lightMultiplier = 1.0
+            print("☀️ 設定預設場景為標準亮度")
         }
 
-        // 只在需要變暗時添加遮罩
-        if darknessAlpha > 0.01 {
-            // 創建一個巨大的半透明黑色球體包圍整個場景
-            let darknessMaterial = SimpleMaterial(
-                color: UIColor(white: 0, alpha: CGFloat(darknessAlpha)),
-                isMetallic: false
-            )
+        // ========= 遞歸調整場景中所有光源的強度 =========
+        func adjustLights(_ entity: Entity, multiplier: Float) {
+            // 調整方向光
+            if var directional = entity.components[DirectionalLightComponent.self] {
+                directional.intensity *= multiplier
+                entity.components[DirectionalLightComponent.self] = directional
+                print("   💡 調整方向光: \(directional.intensity) lux")
+            }
 
-            // 使用一個大球體作為遮罩（半徑50米，包圍整個場景）
-            let darknessOverlay = ModelEntity(
-                mesh: .generateSphere(radius: 50),
-                materials: [darknessMaterial]
-            )
+            // 調整點光源
+            if var point = entity.components[PointLightComponent.self] {
+                point.intensity *= multiplier
+                entity.components[PointLightComponent.self] = point
+                print("   💡 調整點光源: \(point.intensity) lumens")
+            }
 
-            // 反轉球體，讓黑色面向內部
-            darknessOverlay.scale *= SIMD3<Float>(repeating: -1)
-            darknessOverlay.position = [0, 0, 0]
-            darknessOverlay.name = "DarknessOverlay"
+            // 調整聚光燈
+            if var spot = entity.components[SpotLightComponent.self] {
+                spot.intensity *= multiplier
+                entity.components[SpotLightComponent.self] = spot
+                print("   💡 調整聚光燈: \(spot.intensity) lumens")
+            }
 
-            content.add(darknessOverlay)
-            print("   🌑 已添加黑暗遮罩 (alpha: \(darknessAlpha))")
+            // 遞歸處理子實體
+            for child in entity.children {
+                adjustLights(child, multiplier: multiplier)
+            }
         }
 
-        print("✅ 曝光設定完成 (exposure: \(exposureValue) EV)")
+        adjustLights(scene, multiplier: lightMultiplier)
+
+        // ========= 對昏暗場景：添加黑色天空球 =========
+        if isDark {
+            let skySphere = ModelEntity(mesh: .generateSphere(radius: 50))
+
+            // 使用 UnlitMaterial 黑色材質
+            let skyMaterial = UnlitMaterial(color: .black)
+
+            skySphere.model?.materials = [skyMaterial]
+
+            // 反轉 scale 讓內側可見（雙面效果）
+            skySphere.scale = SIMD3<Float>(-1, 1, 1)
+            skySphere.position = [0, 0, 0]
+            skySphere.name = "DarkSkySphere"
+
+            content.add(skySphere)
+            print("   🌑 已添加黑色天空球")
+        }
+
+        print("✅ 場景光照設定完成")
     }
 
     /// 調整場景物體的材質，減少不需要的反射
